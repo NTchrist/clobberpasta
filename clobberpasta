@@ -1,0 +1,45 @@
+#!/bin/bash
+CLOBBERPASTA_RUNSTAMP=$(date "+%Y-%m-%d-%H-%M-%S")
+CLOBBERPASTA_PATH="${1}"
+CLOBBERPASTA_FILENAME=$(basename "$CLOBBERPASTA_PATH")
+CLOBBERPASTA_DIRECTORY=$(dirname "$(realpath "$1")")
+CLOBBERPASTA_BACKUPFILE="$HOME/.clobberpasta$CLOBBERPASTA_DIRECTORY/$CLOBBERPASTA_FILENAME/${CLOBBERPASTA_RUNSTAMP}_${CLOBBERPASTA_FILENAME}"
+
+# Check for the backup and create it if it doesn't exist
+if [ ! -d "$HOME/.clobberpasta" ]; then
+    mkdir "$HOME/.clobberpasta"
+fi
+
+# Check if $CLOBBERPASTA_PATH exists as a file, if not, try to create a blank file and handle permission errors
+if [ ! -f "$CLOBBERPASTA_PATH" ]; then
+    if [ ! -e "$CLOBBERPASTA_PATH" ]; then
+        touch "$CLOBBERPASTA_PATH" 2>/dev/null || { echo "Error: Unable to create file '$CLOBBERPASTA_PATH'."; exit 1; }
+    else
+        echo "Error: '$CLOBBERPASTA_PATH' exists but is not a file."
+        exit 1
+    fi
+fi
+
+# Check if the nested backup directory exists, and create it if it does not
+if [ ! -d "$HOME/.clobberpasta$CLOBBERPASTA_DIRECTORY/$CLOBBERPASTA_FILENAME" ]; then
+    mkdir -p "$HOME/.clobberpasta$CLOBBERPASTA_DIRECTORY/$CLOBBERPASTA_FILENAME"
+fi
+
+# make a backup of the file
+cp "$CLOBBERPASTA_PATH" "$CLOBBERPASTA_BACKUPFILE"
+echo "Saved backup as: $CLOBBERPASTA_BACKUPFILE"
+
+# clear the file
+echo "" > "$CLOBBERPASTA_PATH"
+
+# Check if nano is installed, if not, check for vim, otherwise use vi
+if command -v nano >/dev/null 2>&1; then
+    CLOBBERPASTA_EDITOR=$(command -v nano)
+elif command -v vim >/dev/null 2>&1; then
+    CLOBBERPASTA_EDITOR=$(command -v vim)
+else
+    CLOBBERPASTA_EDITOR=$(command -v vi)
+fi
+
+# open editor, ready to pasta
+"$CLOBBERPASTA_EDITOR" "$CLOBBERPASTA_PATH"
