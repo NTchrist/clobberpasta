@@ -1,5 +1,5 @@
 # clobberpasta
-clobber a file and open nano, ready to accept a pasted new copy of that file.
+clobber a file and open [nano] > [vim] > [vi], ready to accept a pasted new copy of that file.
 
 Useful for ninja-replacing a file when you don't otherwise have a convinient way to replace that file.
 
