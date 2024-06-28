@@ -9,7 +9,7 @@ Creates a backup every edit in ~/.nanopasta/PATH/TO/FILE/[DATESTAMP]_[FILE]
 
 usage:
 
-nanopasta /path/to/file
+clobberpasta /path/to/file
 
 --
 
