@@ -1,1 +1,45 @@
-echo "" > "${1}";nano "${1}"
+#!/bin/bash
+NANOPASTA_RUNSTAMP=$(date "+%Y-%m-%d-%H-%M-%S")
+NANOPASTA_PATH="${1}"
+NANOPASTA_FILENAME=$(basename "$NANOPASTA_PATH")
+NANOPASTA_DIRECTORY=$(dirname "$(realpath "$1")")
+NANOPASTA_BACKUPFILE="$HOME/.nanopasta$NANOPASTA_DIRECTORY/$NANOPASTA_FILENAME/${NANOPASTA_RUNSTAMP}_${NANOPASTA_FILENAME}"
+
+# Check for the backup and create it if it doesn't exist
+if [ ! -d "$HOME/.nanopasta" ]; then
+    mkdir "$HOME/.nanopasta"
+fi
+
+# Check if $NANOPASTA_PATH exists as a file, if not, try to create a blank file and handle permission errors
+if [ ! -f "$NANOPASTA_PATH" ]; then
+    if [ ! -e "$NANOPASTA_PATH" ]; then
+        touch "$NANOPASTA_PATH" 2>/dev/null || { echo "Error: Unable to create file '$NANOPASTA_PATH'."; exit 1; }
+    else
+        echo "Error: '$NANOPASTA_PATH' exists but is not a file."
+        exit 1
+    fi
+fi
+
+# Check if the nested backup directory exists, and create it if it does not
+if [ ! -d "$HOME/.nanopasta$NANOPASTA_DIRECTORY/$NANOPASTA_FILENAME" ]; then
+    mkdir -p "$HOME/.nanopasta$NANOPASTA_DIRECTORY/$NANOPASTA_FILENAME"
+fi
+
+# make a backup of the file
+cp "$NANOPASTA_PATH" "$NANOPASTA_BACKUPFILE"
+echo "Saved backup as: $NANOPASTA_BACKUPFILE"
+
+# clear the file
+echo "" > "$NANOPASTA_PATH"
+
+# Check if nano is installed, if not, check for vim, otherwise use vi
+if command -v nano >/dev/null 2>&1; then
+    NANOPASTA_EDITOR=$(command -v nano)
+elif command -v vim >/dev/null 2>&1; then
+    NANOPASTA_EDITOR=$(command -v vim)
+else
+    NANOPASTA_EDITOR=$(command -v vi)
+fi
+
+# open editor, ready to pasta
+"$NANOPASTA_EDITOR" "$NANOPASTA_PATH"
