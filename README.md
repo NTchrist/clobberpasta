@@ -14,5 +14,6 @@ clobberpasta /path/to/file
 --
 
 Install with (as root):
-
+```
 wget https://raw.githubusercontent.com/NTchrist/clobberpasta/main/clobberpasta -O /usr/bin/clobberpasta; chmod +x /usr/bin/clobberpasta
+```
