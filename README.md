@@ -5,6 +5,7 @@ Useful for ninja-replacing a file when you don't otherwise have a convinient way
 
 Creates a backup every edit in ~/.clobberpasta/PATH/TO/FILE/[DATESTAMP]_[FILE]
 
+If the resulting file is functionally empty (defined as not existing, containing only blank spaces, or a single empty line), will automatically restore from backup.  This is useful if you include clobberpasta as a manual command centipede but don't always need to update that file.
 --
 
 usage:
