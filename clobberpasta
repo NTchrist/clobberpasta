@@ -43,3 +43,16 @@ fi
 
 # open editor, ready to pasta
 "$CLOBBERPASTA_EDITOR" "$CLOBBERPASTA_PATH"
+
+# Function to check if the file is effectively empty
+is_effectively_empty() {
+    # Check if file does not exist, is empty, contains only spaces, or has only a single empty line
+    [[ ! -f "$1" || ! -s "$1" || "$(tr -d '[:space:]' < "$1")" == "" ]]
+}
+
+# Check if the resulting pasta file is empty
+if is_effectively_empty $CLOBBERPASTA_PATH; then
+    echo "Pasta was empty. Restoring from backup..."
+    cp "$CLOBBERPASTA_BACKUPFILE" "$CLOBBERPASTA_PATH"
+fi
+
